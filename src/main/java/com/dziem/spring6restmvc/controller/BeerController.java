@@ -1,18 +1,16 @@
 package com.dziem.spring6restmvc.controller;
 
 import com.dziem.spring6restmvc.model.Beer;
-import com.dziem.spring6restmvc.model.Customer;
 import com.dziem.spring6restmvc.service.BeerService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -56,10 +54,15 @@ public class BeerController {
     public List<Beer> listBeers() {
         return beerService.listBeers();
     }
-    @RequestMapping(value = BEER_PATH_ID, method = RequestMethod.GET)
+    @GetMapping(value = BEER_PATH_ID)
     public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
         log.debug("Get Beer by Id - in controller");
 
-        return beerService.getBeerById(beerId);
+        return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
     }
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity handleNotFoundException() {
+        System.out.println("L");
+        return ResponseEntity.notFound().build();
+    } //works only for BeerController and it is not handling every COntroller
 }
