@@ -1,5 +1,6 @@
 package com.dziem.spring6restmvc.service;
 
+import com.dziem.spring6restmvc.entities.Beer;
 import com.dziem.spring6restmvc.model.BeerDTO;
 
 import java.util.List;

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.*;
 @Slf4j
@@ -63,18 +64,20 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomerById(UUID customerId, CustomerDTO customer) {
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customer) {
         CustomerDTO existing = customersMap.get(customerId);
         existing.setCustomerName(customer.getCustomerName());
         existing.setVersion(customer.getVersion());
         existing.setLastModifiedDate(LocalDateTime.now());
 
         customersMap.put(existing.getId(),existing);
+        return Optional.of(existing);
     }
 
     @Override
-    public void deleteCustomerById(UUID customerId) {
+    public Boolean deleteCustomerById(UUID customerId) {
         customersMap.remove(customerId);
+        return true;
     }
 
     @Override

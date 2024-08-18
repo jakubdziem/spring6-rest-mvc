@@ -41,6 +41,26 @@ class BeerControllerIT {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
         assertThat(beerRepository.findById(beer.getId()).isEmpty());
     }
+    @Rollback
+    @Transactional
+    @Test
+    void testPatch() {
+        Beer beer = beerRepository.findAll().get(0);
+        BeerDTO beerDTO = beerMapper.beerToBeerDto(beer);
+        final String beerName = "PATCHED";
+        beerDTO.setBeerName(beerName);
+
+        long countBefore = beerRepository.count();
+        ResponseEntity responseEntity = beerController.updateBeerPatchById(beer.getId(), beerDTO);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatusCode.valueOf(204));
+
+        long countAfter = beerRepository.count();
+
+        Beer patchedBeer = beerRepository.findById(beer.getId()).get();
+        assertThat(patchedBeer.getBeerName()).isEqualTo(beerName);
+        assertThat(beer.getBeerStyle()).isEqualTo(patchedBeer.getBeerStyle());
+        assertThat(countBefore).isEqualTo(countAfter);
+    }
     @Test
     void testUpdateNotFount() {
         assertThrows(NotFoundException.class, () -> {
